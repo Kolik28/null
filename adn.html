@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Background Audio Player - Autoplay & Loop</title>
+  <title>Background Audio Player - Autoplay & Loop Without Interaction</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <style>
     /* Reset */
@@ -69,25 +69,27 @@
 </head>
 <body>
   <div class="container" role="main">
-    <h1>Background Music Player 1</h1>
-    <p>Audio is playing automatically and will loop continuously in the background.</p>
-    <audio id="background-audio" aria-label="Background music player" autoplay loop>
+    <h1>Background Music Player</h1>
+    <p>Audio will autoplay muted and loop continuously in the background.</p>
+    <audio id="background-audio" aria-label="Background music player" autoplay loop muted playsinline>
       <source src="https://www.bensound.com/bensound-music/bensound-anewbeginning.mp3" type="audio/mpeg" />
       Your browser does not support the audio element.
     </audio>
-    <p class="visually-hidden" id="audio-status">Audio is playing and looping continuously.</p>
+    <p class="visually-hidden" id="audio-status">Audio is playing muted and looping continuously.</p>
   </div>
   <script>
-    // On user gesture to resume audio if autoplay blocked (mostly on mobile)
     const audio = document.getElementById('background-audio');
-    function tryPlay() {
-      audio.play().catch(() => {
-        // Autoplay might be blocked, wait for user interaction
-        document.body.addEventListener('click', () => audio.play(), {once: true, passive: true});
-        document.body.addEventListener('touchstart', () => audio.play(), {once: true, passive: true});
-      });
-    }
-    window.addEventListener('load', tryPlay);
+    // Try to unmute after play - may be blocked by browser policies
+    audio.play().then(()=> {
+      if(audio.muted) {
+        audio.muted = false;
+        // Update accessibility status message
+        document.getElementById('audio-status').textContent = 'Audio is playing unmuted and looping continuously.';
+      }
+    }).catch((error) => {
+      // Autoplay with sound likely blocked; audio plays muted because muted attribute exists
+      console.warn('Autoplay with sound blocked, playing muted audio.');
+    });
   </script>
 </body>
 </html>
