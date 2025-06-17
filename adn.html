@@ -1,14 +1,94 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemutar Audio Otomatis & Looping</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Background Audio Player - Autoplay & Loop</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+      color: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      min-height: 100vh;
+    }
+    /* Container */
+    .container {
+      text-align: center;
+      padding: 24px;
+      background: rgba(139, 92, 246, 0.15);
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      max-width: 400px;
+      width: 90vw;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    }
+    h1 {
+      margin-bottom: 16px;
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      user-select: none;
+    }
+    p {
+      margin-bottom: 24px;
+      color: #ccc;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    /* Audio Player Controls (hidden but accessible) */
+    audio {
+      outline: none;
+      width: 100%;
+      visibility: hidden;
+      height: 0;
+    }
+    /* Accessibility message */
+    .visually-hidden {
+      position: absolute !important;
+      height: 1px;
+      width: 1px;
+      overflow: hidden;
+      clip: rect(1px,1px,1px,1px);
+      white-space: nowrap;
+    }
+  </style>
 </head>
-<body> oke
-    <audio autoplay loop>
-        <source src="anu audio.mp3" type="audio/mpeg">
-        Browser Anda tidak mendukung elemen audio.
+<body>
+  <div class="container" role="main">
+    <h1>Background Music Player</h1>
+    <p>Audio is playing automatically and will loop continuously in the background.</p>
+    <audio id="background-audio" aria-label="Background music player" autoplay loop>
+      <source src="https://cdn.pixabay.com/download/audio/2022/07/20/audio_c427cb9a2a.mp3?filename=summer-5674.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
     </audio>
+    <p class="visually-hidden" id="audio-status">Audio is playing and looping continuously.</p>
+  </div>
+  <script>
+    // On user gesture to resume audio if autoplay blocked (mostly on mobile)
+    const audio = document.getElementById('background-audio');
+    function tryPlay() {
+      audio.play().catch(() => {
+        // Autoplay might be blocked, wait for user interaction
+        document.body.addEventListener('click', () => audio.play(), {once: true, passive: true});
+        document.body.addEventListener('touchstart', () => audio.play(), {once: true, passive: true});
+      });
+    }
+    window.addEventListener('load', tryPlay);
+  </script>
 </body>
 </html>
+
